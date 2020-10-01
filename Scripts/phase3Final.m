@@ -3,7 +3,7 @@ close all; % closes all figures
 %soundArray = ["female_anger", "female_crying", "female_laughter", "male_anger", "male_crying", "male_laughter", "noisy_room", "party_crowd", "car_drive_away", "right_hook", "left_hook"];
 %soundArray = ["ambulance", "british_woman", "little_boy", "old_man", "office", "party"];
 
-signalProcess("restaurant_noise");
+% signalProcess("restaurant_noise");
 
 function signalProcess(fileName)
     % 3.1 Read sound file
@@ -51,8 +51,6 @@ function signalProcess(fileName)
         end 
     end
     
-    %linearScale = [100, 1087.5, 2075, 3062.5, 4050, 5037.5, 6025, 7012.5, 7999];
-    
     output = transpose(zeros(1,numel(y)));
     timeRange2 = transpose(0:(1/Fs):time);
     
@@ -65,21 +63,16 @@ function signalProcess(fileName)
         
         filteredSignal = filter(num, denum, y);
       
-        %lowpassSignal = lowpass(abs(filteredSignal), 400/(Fs/2));
         [lowNum, highNum] = butter(12, 800/(Fs/2));
         lowpassSignal = filter(lowNum, highNum, abs(filteredSignal));
         
         centerFreq = (rightGreenwood + leftGreenwood)/2;
         
-        %figure("Name", fileName);
         cosPlot2 = cos(2*pi*centerFreq*timeRange2);
         
         modAmp = cosPlot2.* lowpassSignal;
         output = output + modAmp;
-%         plot(timeRange2, lowpassSignal);
-%         title("Modulated Amplitude");
-%         xlabel("Time (s)");
-%         ylabel("Amplitude");
+
     end
     toc
     
@@ -89,8 +82,5 @@ function signalProcess(fileName)
     ylabel("Amplitude");
     
     audiowrite('restNoise' + string(numChannels) + '.wav',output, Fs);
-    %for i=1:length(soundArray)
-    %  signalProcess(soundArray(i));
-    %end
         
 end
